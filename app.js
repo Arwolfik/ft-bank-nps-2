@@ -4,7 +4,7 @@
   // TODO: подставишь invoke URL YC Function (БЕЗ /submit)
   const BACKEND_URL = "https://functions.yandexcloud.net/d4e1id3b0ckdmjkvt72j";
 
-  const FORM_ID = "nps_1"; // идентификатор миниаппа (для одного универсального бэка)
+  const FORM_ID = "nps_2"; // идентификатор миниаппа (для одного универсального бэка)
 
   const form = document.getElementById("nps-form");
   const submitBtn = document.getElementById("submit-btn");
@@ -85,7 +85,7 @@
     }
 
     const answers = {};
-    const required = ["q1","q2","q3","q4"];
+    const required = ["q1","q2","q3","q4","q5"];
     let ok = true;
 
     for (const q of required) {
