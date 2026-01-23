@@ -33,8 +33,26 @@
     resultEl.style.display = "block";
   }
 
+  // Снимаем состояние "Не могу оценить" при выборе любой цифры
+  function wireNAReset(el) {
+    const name = el.dataset.name;
+    const naBtn = el.querySelector(".scale-na");
+    if (!naBtn) return;
+
+    el.querySelectorAll(`input[type="radio"][name="${name}"]`).forEach((inp) => {
+      inp.addEventListener("change", () => {
+        naBtn.classList.remove("active");
+        naBtn.dataset.value = "";
+      });
+    });
+  }
+
   function buildScale(el) {
     const name = el.dataset.name;
+
+    const left = el.dataset.left || "1";
+    const right = el.dataset.right || "10";
+    const hasNA = el.dataset.na === "true";
 
     // 1..10
     for (let v = 1; v <= 10; v++) {
@@ -55,15 +73,43 @@
       el.appendChild(label);
     }
 
-    // подписи по краям (по желанию)
+    // подписи по краям (кастомные)
     const hint = document.createElement("div");
     hint.className = "scale-hint";
-    hint.innerHTML = `<span>1</span><span>10</span>`;
+    hint.innerHTML = `<span>1 — ${left}</span><span>10 — ${right}</span>`;
     el.appendChild(hint);
+
+    // "Не могу оценить" (для нужных вопросов)
+    if (hasNA) {
+      const naBtn = document.createElement("button");
+      naBtn.type = "button";
+      naBtn.className = "scale-na";
+      naBtn.textContent = "Не могу оценить";
+      naBtn.dataset.value = "";
+
+      naBtn.addEventListener("click", () => {
+        const isActive = naBtn.classList.toggle("active");
+        naBtn.dataset.value = isActive ? "na" : "";
+
+        // если активировали NA — снимаем выбранные цифры
+        if (isActive) {
+          el.querySelectorAll(`input[type="radio"][name="${name}"]`).forEach((i) => {
+            i.checked = false;
+          });
+        }
+      });
+
+      el.appendChild(naBtn);
+    }
+
+    wireNAReset(el);
   }
 
   // init UI
-  try { tg?.ready(); tg?.expand(); } catch (_) {}
+  try {
+    tg?.ready();
+    tg?.expand();
+  } catch (_) {}
 
   document.querySelectorAll(".scale").forEach(buildScale);
 
@@ -73,7 +119,7 @@
     resultEl.style.display = "none";
 
     // сброс локальных ошибок
-    document.querySelectorAll("[data-err]").forEach(p => {
+    document.querySelectorAll("[data-err]").forEach((p) => {
       p.textContent = "";
       p.style.display = "none";
     });
@@ -85,18 +131,24 @@
     }
 
     const answers = {};
-    const required = ["q1","q2","q3","q4","q5"];
+    const required = ["q1", "q2", "q3", "q7", "q8"];
     let ok = true;
 
     for (const q of required) {
       const picked = form.querySelector(`input[name="${q}"]:checked`);
-      if (!picked) {
+      const scaleEl = form.querySelector(`.scale[data-name="${q}"]`);
+      const naBtn = scaleEl?.querySelector(".scale-na");
+      const naValue = naBtn?.dataset?.value || "";
+
+      if (picked) {
+        answers[q] = Number(picked.value);
+      } else if (naValue === "na") {
+        answers[q] = "na";
+      } else {
         const p = form.querySelector(`[data-err="${q}"]`);
         p.textContent = "Выберите оценку от 1 до 10";
         p.style.display = "block";
         ok = false;
-      } else {
-        answers[q] = Number(picked.value);
       }
     }
 
@@ -110,7 +162,6 @@
         form_id: FORM_ID,
         tg_id: tgId,
         answers,
-        // опционально: если вдруг захочешь проверять подпись на бэке
         tg_init_data: tg?.initData || ""
       };
 
