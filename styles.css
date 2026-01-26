@@ -301,6 +301,7 @@ button:active {
     font-size: 1rem;
   }
 }
+
 /* =========================
    Section titles
 ========================= */
@@ -333,8 +334,9 @@ button:active {
 .scale {
   display: grid;
   grid-template-columns: repeat(10, 1fr);
-  gap: 8px;
+  gap: 6px;
   margin-bottom: 8px;
+  width: 100%;
 }
 
 .scale input[type="radio"] {
@@ -368,12 +370,53 @@ button:active {
   display: flex;
   justify-content: space-between;
   color: var(--color-muted);
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   padding: 2px 2px 0;
 }
 
+/* "Не могу оценить" */
+.scale-na {
+  grid-column: 1 / -1;
+  margin-top: 8px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px dashed var(--color-border);
+  background: #fff;
+  color: var(--color-text);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  transition: box-shadow 0.12s ease, border-color 0.12s ease, transform 0.12s ease;
+}
+
+.scale-na:hover {
+  filter: brightness(0.98);
+}
+
+.scale-na:active {
+  transform: scale(0.99);
+}
+
+.scale-na.active {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(255, 231, 0, 0.35);
+}
+
+/* ===== Мобилка: всё равно 10 в ряд (как ты просил) ===== */
 @media (max-width: 600px) {
   .scale {
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(10, 1fr); /* важно: НЕ 5 */
+    gap: 4px;
+  }
+
+  .scale-btn {
+    height: 38px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+  }
+
+  .scale-hint {
+    font-size: 0.8rem;
   }
 }
