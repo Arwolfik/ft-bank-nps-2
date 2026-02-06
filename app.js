@@ -131,7 +131,7 @@
     }
 
     const answers = {};
-    const required = ["q1", "q2", "q3", "q7", "q8"];
+    const required = ["q1", "q2", "q7", "q8"];
     let ok = true;
 
     for (const q of required) {
@@ -151,6 +151,15 @@
         ok = false;
       }
     }
+
+    // необязательный свободный комментарий
+    const freeTextEl = document.getElementById("free-text");
+    const freeText = (freeTextEl?.value || "").trim();
+    if (freeText) {
+      // ключ "free" бэкенд запишет в колонку NPS1_FREE (см. конфиг)
+      answers.free = freeText;
+    }
+
 
     if (!ok) return;
 
