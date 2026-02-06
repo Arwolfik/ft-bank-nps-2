@@ -131,7 +131,7 @@
     }
 
     const answers = {};
-    const required = ["q1", "q2", "q7", "q8"];
+    const required = ["q1", "q2", "q3", "q7", "q8"];
     let ok = true;
 
     for (const q of required) {
