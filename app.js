@@ -160,6 +160,13 @@
       answers.free = freeText;
     }
 
+    const botTextEl = document.getElementById("bot-text");
+    const botText = (botTextEl?.value || "").trim();
+    if (botText) {
+      // ключ "free" бэкенд запишет в колонку NPS1_FREE (см. конфиг)
+      answers.bot = botText;
+    }
+
 
     if (!ok) return;
 
